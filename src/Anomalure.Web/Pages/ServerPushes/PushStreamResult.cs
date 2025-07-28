@@ -2,21 +2,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Anomalure.Web.Pages.ServerPushes;
 
-public class PushStreamResult : IActionResult
+public class PushStreamResult(
+    Func<Stream, CancellationToken, Task> _streamHandler
+) : IActionResult
 {
-    private readonly Func<Stream, CancellationToken, Task> _streamHandler;
 
-    public PushStreamResult(Func<Stream, CancellationToken, Task> streamHandler)
+    public async Task ExecuteResultAsync(
+        ActionContext context
+    )
     {
-        _streamHandler = streamHandler ?? throw new ArgumentNullException(nameof(streamHandler));
-    }
-
-    public async Task ExecuteResultAsync(ActionContext context)
-    {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(context);
 
         var response = context.HttpContext.Response;
         using var stream = response.Body;
-        await _streamHandler(stream, context.HttpContext.RequestAborted);
+        await _streamHandler(
+            stream,
+            context.HttpContext.RequestAborted
+        );
     }
 }
