@@ -25,7 +25,8 @@ public partial class ServerPushesEventsModel(
 
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        var data = $"Server time is {DateTime.Now:yyyy-MM-dd HH:mm:ss}";
+                        var data = $"Server time is {DateTime
+                            .Now:yyyy-MM-dd HH:mm:ss}";
                         if (isHtmx)
                         {
                             await WriteHtmlEvent(
@@ -56,27 +57,35 @@ public partial class ServerPushesEventsModel(
         );
     }
 
+    static void SetServerPushHeaders(
+        IHeaderDictionary headers
+    )
+    {
+        headers.Append(
+            "Content-Type", "text/event-stream"
+        );
+        headers.Append(
+            "Cache-Control", "no-cache"
+        );
+    }
+
     static async Task WriteHtmlEvent(
         StreamWriter writer,
         string data
-    )
-    {
+    ) =>
         await WriteEvent(
             writer,
             data: "<div>" + data + "</div>"
         );
-    }
 
     static async Task WriteTextEvent(
         StreamWriter writer,
         string data
-    )
-    {
+    ) =>
         await WriteEvent(
             writer,
             data: data
         );
-    }
 
     static async Task WriteEvent(
         StreamWriter writer,
@@ -84,15 +93,13 @@ public partial class ServerPushesEventsModel(
         string eventType = "message"
     )
     {
-        await writer.WriteLineAsync("event: " + eventType);
-        await writer.WriteLineAsync("data: " + data);
+        await writer.WriteLineAsync(
+            "event: " + eventType
+        );
+        await writer.WriteLineAsync(
+            "data: " + data
+        );
         await writer.WriteLineAsync();
         await writer.FlushAsync();
-    }
-
-    static void SetServerPushHeaders(IHeaderDictionary headers)
-    {
-        headers.Append("Content-Type", "text/event-stream");
-        headers.Append("Cache-Control", "no-cache");
     }
 }

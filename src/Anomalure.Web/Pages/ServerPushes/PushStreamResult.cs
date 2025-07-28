@@ -6,7 +6,6 @@ public class PushStreamResult(
     Func<Stream, CancellationToken, Task> _streamHandler
 ) : IActionResult
 {
-
     public async Task ExecuteResultAsync(
         ActionContext context
     )
