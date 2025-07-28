@@ -25,24 +25,21 @@
             id="htmx-sse-events"
             hx-ext="sse"
             sse-connect="/serverpushes/events?via=htmx"
-            sse-swap="message"
-            hx-swap="afterbegin">
+            sse-swap="message">
         </div>
     </div>
 
     <div style="flex: 1;">
         <h2>JS EventSource SSE</h2>
         <p>JS EventSource events will appear here.</p>
-        <div id="events"></div>
+        <div id="js-event"></div>
     </div>
 </div>
 
 <script>
     const eventSource = new EventSource('/serverpushes/events');
     eventSource.onmessage = function(event) {
-        const eventsDiv = document.getElementById('events');
-        const newEvent = document.createElement('div');
-        newEvent.textContent = event.data;
-        eventsDiv.prepend(newEvent); // Append new events to the top
+        const eventsDiv = document.getElementById('js-event');
+        eventsDiv.textContent = event.data;
     };
 </script>
