@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Anomalure.Web.Pages.ServerPushes;
 
-public class ServerPushesEventsModel : PageModel
+public partial class ServerPushesEventsModel(
+    ILogger<ServerPushesEventsModel> _logger
+) : PageModel
 {
     public IActionResult OnGet()
     {
-        Response.Headers.Append("Content-Type", "text/event-stream");
-        Response.Headers.Append("Cache-Control", "no-cache");
+        SetServerPushHeaders(Response.Headers);
 
         return new PushStreamResult(
             async (stream, cancellationToken) =>
@@ -36,13 +37,19 @@ public class ServerPushesEventsModel : PageModel
                         );
                     }
                 }
+                catch (TaskCanceledException) { }
+                catch (InvalidOperationException) { }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(
-                        $"Error in server push stream: {ex.Message}"
-                    );
+                    LogError(_logger, ex);
                 }
             }
         );
+    }
+
+    static void SetServerPushHeaders(IHeaderDictionary headers)
+    {
+        headers.Append("Content-Type", "text/event-stream");
+        headers.Append("Cache-Control", "no-cache");
     }
 }
