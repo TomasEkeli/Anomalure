@@ -3,14 +3,23 @@
 
 <h1>Server Pushes</h1>
 
-<h2>HTMX SSE Events</h2>
-<div id="htmx-sse-events">
+<div style="display: flex; gap: 20px;">
+    <div style="flex: 1;">
+        <h2>HTMX server-sent events</h2>
+        <div
+            id="htmx-sse-events"
+            hx-ext="sse"
+            sse-connect="/serverpushes/events?via=htmx"
+            sse-swap="message"
+            hx-swap="afterbegin">
+        </div>
+    </div>
 
+    <div style="flex: 1;">
+        <h2>JavaScript EventSource server-sent events</h2>
+        <div id="events"></div>
+    </div>
 </div>
-<hr/>
-
-<h2>JavaScript EventSource Server-Sent Events</h2>
-<div id="events"></div>
 
 <script>
     const eventSource = new EventSource('/serverpushes/events');

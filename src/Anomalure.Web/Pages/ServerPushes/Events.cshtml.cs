@@ -9,6 +9,7 @@ public partial class ServerPushesEventsModel(
 {
     public IActionResult OnGet()
     {
+        var isHtmx = Request.Query["via"] == "htmx";
         SetServerPushHeaders(Response.Headers);
 
         return new PushStreamResult(
@@ -24,13 +25,21 @@ public partial class ServerPushesEventsModel(
 
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        await writer
-                            .WriteLineAsync(
-                                $"data: Server time is {DateTime.Now}\n"
+                        var data = $"Server time is {DateTime.Now:yyyy-MM-dd HH:mm:ss}";
+                        if (isHtmx)
+                        {
+                            await WriteHtmlEvent(
+                                writer,
+                                data: data
                             );
-                        await writer.FlushAsync(
-                            cancellationToken
-                        );
+                        }
+                        else
+                        {
+                            await WriteTextEvent(
+                                writer,
+                                data: data
+                            );
+                        }
                         await Task.Delay(
                             Random.Shared.Next(800, 3000),
                             cancellationToken
@@ -45,6 +54,40 @@ public partial class ServerPushesEventsModel(
                 }
             }
         );
+    }
+
+    static async Task WriteHtmlEvent(
+        StreamWriter writer,
+        string data
+    )
+    {
+        await WriteEvent(
+            writer,
+            data: "<div>" + data + "</div>"
+        );
+    }
+
+    static async Task WriteTextEvent(
+        StreamWriter writer,
+        string data
+    )
+    {
+        await WriteEvent(
+            writer,
+            data: data
+        );
+    }
+
+    static async Task WriteEvent(
+        StreamWriter writer,
+        string data,
+        string eventType = "message"
+    )
+    {
+        await writer.WriteLineAsync("event: " + eventType);
+        await writer.WriteLineAsync("data: " + data);
+        await writer.WriteLineAsync();
+        await writer.FlushAsync();
     }
 
     static void SetServerPushHeaders(IHeaderDictionary headers)
