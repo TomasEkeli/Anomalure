@@ -20,7 +20,7 @@ public partial class ServerPushesWebSocketModel(
 
             await EndlesslySendTime(
                 webSocket,
-                CancellationToken.None
+                cancellationToken: HttpContext.RequestAborted
             );
         }
         else
@@ -34,37 +34,63 @@ public partial class ServerPushesWebSocketModel(
         CancellationToken cancellationToken = default
     )
     {
-        do
+        try
         {
-            var message =
-            $"""
-            <div id="websocket-events">Server time is {DateTime.Now:yyyy-MM-dd HH:mm:ss}</div>
-            """;
-            var echoMessage = Encoding.UTF8.GetBytes(message);
+            do
+            {
+                var message =
+                $"""
+                <div id="websocket-events">Server time is {DateTime.Now:yyyy-MM-dd HH:mm:ss}</div>
+                """;
+                var echoMessage = Encoding.UTF8.GetBytes(message);
 
-            await webSocket
-                .SendAsync(
-                    buffer: new(echoMessage),
-                    messageType: WebSocketMessageType.Text,
-                    endOfMessage: true,
-                    cancellationToken: CancellationToken.None
+                await webSocket
+                    .SendAsync(
+                        buffer: new(echoMessage),
+                        messageType: WebSocketMessageType.Text,
+                        endOfMessage: true,
+                        cancellationToken: cancellationToken
+                    );
+
+                LogSent(_logger, message);
+                await Task.Delay(
+                    Random.Shared.Next(800, 3000),
+                    cancellationToken
                 );
 
-            LogSent(_logger, message);
-            await Task.Delay(
-                Random.Shared.Next(800, 3000)
+            } while (
+                webSocket.State == WebSocketState.Open &&
+                !cancellationToken.IsCancellationRequested
             );
-
-        } while (
-            webSocket.State == WebSocketState.Open &&
-            !cancellationToken.IsCancellationRequested
-        );
-        await webSocket
-            .CloseAsync(
-                closeStatus: WebSocketCloseStatus.NormalClosure,
-                statusDescription: "Server time sent",
-                cancellationToken: CancellationToken.None
+        }
+        catch (Exception ex)
+        {
+            LogError(
+                _logger,
+                ex
             );
-        LogClosed(_logger);
+        }
+        finally
+        {
+            if (webSocket.State == WebSocketState.Open)
+            {
+                try
+                {
+                    await webSocket.CloseAsync(
+                        closeStatus: WebSocketCloseStatus.NormalClosure,
+                        statusDescription: "Server time sent",
+                        cancellationToken: CancellationToken.None
+                    );
+                }
+                catch (Exception ex)
+                {
+                    LogCloseError(
+                        _logger,
+                        ex
+                    );
+                }
+            }
+            LogClosed(_logger);
+        }
     }
 }

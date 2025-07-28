@@ -29,4 +29,24 @@ public partial class ServerPushesWebSocketModel
     static partial void LogClosed(
         ILogger logger
     );
+
+    [LoggerMessage(
+        EventId = 4,
+        Level = LogLevel.Error,
+        Message = "WebSocket error"
+    )]
+    static partial void LogError(
+        ILogger logger,
+        Exception exception
+    );
+
+    [LoggerMessage(
+        EventId = 5,
+        Level = LogLevel.Debug,
+        Message = "Closing websocket errored, probably already closed"
+    )]
+    static partial void LogCloseError(
+        ILogger logger,
+        Exception exception
+    );
 }
