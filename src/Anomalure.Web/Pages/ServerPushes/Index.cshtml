@@ -6,7 +6,21 @@
 
 <div style="display: flex; gap: 20px;">
     <div style="flex: 1;">
-        <h2>HTMX server-sent events</h2>
+        <h2>WebSockets</h2>
+        <p>WebSocket events will appear here.</p>
+        <div
+            id="websocket"
+            hx-ext="ws"
+            ws-connect="/serverpushes/ws"
+            >
+            <div id="websocket-events">
+                <p>Connecting...</p>
+            </div>
+        </div>
+    </div>
+    <div style="flex: 1;">
+        <h2>HTMX SSE</h2>
+        <p>HTMX SSE events will appear here.</p>
         <div
             id="htmx-sse-events"
             hx-ext="sse"
@@ -17,7 +31,8 @@
     </div>
 
     <div style="flex: 1;">
-        <h2>JavaScript EventSource server-sent events</h2>
+        <h2>JS EventSource SSE</h2>
+        <p>JS EventSource events will appear here.</p>
         <div id="events"></div>
     </div>
 </div>

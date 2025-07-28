@@ -47,11 +47,18 @@ public partial class ServerPushesEventsModel(
                         );
                     }
                 }
-                catch (TaskCanceledException) { }
-                catch (InvalidOperationException) { }
+                catch (TaskCanceledException ex)
+                {
+                    LogCancelled(_logger, ex);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    LogInvalidOperation(_logger, ex);
+                }
                 catch (Exception ex)
                 {
                     LogError(_logger, ex);
+                    throw;
                 }
             }
         );
