@@ -1,0 +1,16 @@
+@page
+@model ServerPushesModel
+
+<h1>Server Pushes</h1>
+
+<div id="events"></div>
+
+<script>
+    const eventSource = new EventSource('/serverpushes/events');
+    eventSource.onmessage = function(event) {
+        const eventsDiv = document.getElementById('events');
+        const newEvent = document.createElement('div');
+        newEvent.textContent = event.data;
+        eventsDiv.prepend(newEvent); // Append new events to the top
+    };
+</script>
