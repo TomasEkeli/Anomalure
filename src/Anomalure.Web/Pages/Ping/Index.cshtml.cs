@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Anomalure.Web.Pages;
+namespace Anomalure.Web.Pages.Ping;
 
 public class PingModel : PageModel
 {
