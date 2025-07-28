@@ -1,0 +1,11 @@
+@page
+@model PingModel
+
+<h1>Ping</h1>
+
+<button
+    hx-get="/ping"
+    hx-target="#response"
+    hx-swap="afterbegin">Ping</button>
+
+<div id="response"></div>
