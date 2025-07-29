@@ -10,6 +10,8 @@ public partial class ServerPushesWebSocketModel(
 {
     public async Task OnGet()
     {
+        var isHtmx = HttpContext.Request.Query["via"] == "htmx";
+
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
             using var webSocket = await HttpContext
@@ -18,10 +20,16 @@ public partial class ServerPushesWebSocketModel(
 
             LogConnected(_logger);
 
-            await EndlesslySendTime(
-                webSocket,
-                cancellationToken: HttpContext.RequestAborted
-            );
+            if (isHtmx)
+                await StartSendingHtml(
+                    webSocket,
+                    cancellationToken: HttpContext.RequestAborted
+                );
+            else
+                await StartSendingJson(
+                    webSocket,
+                    cancellationToken: HttpContext.RequestAborted
+                );
         }
         else
         {
@@ -29,8 +37,43 @@ public partial class ServerPushesWebSocketModel(
         }
     }
 
-    async Task EndlesslySendTime(
+    async Task StartSendingHtml(
         WebSocket webSocket,
+        CancellationToken cancellationToken = default
+    ) =>
+        await SendData(
+            webSocket,
+            HtmlTime,
+            cancellationToken
+        );
+
+    async Task StartSendingJson(
+        WebSocket webSocket,
+        CancellationToken cancellationToken = default
+    ) =>
+        await SendData(
+            webSocket,
+            JsonTime,
+            cancellationToken
+        );
+
+    public static string HtmlTime() =>
+        $"""
+        <div id="websocket-events">Server time is {DateTime
+            .Now:yyyy-MM-dd HH:mm:ss}</div>
+        """;
+
+
+    public static string JsonTime() =>
+        $$"""
+        {
+            "serverTime": "{{DateTime.Now:yyyy-MM-ddTHH:mm:ss}}"
+        }
+        """;
+
+    async Task SendData(
+        WebSocket webSocket,
+        Func<string> data,
         CancellationToken cancellationToken = default
     )
     {
@@ -38,15 +81,11 @@ public partial class ServerPushesWebSocketModel(
         {
             do
             {
-                var message =
-                $"""
-                <div id="websocket-events">Server time is {DateTime.Now:yyyy-MM-dd HH:mm:ss}</div>
-                """;
-                var echoMessage = Encoding.UTF8.GetBytes(message);
+                var message = data();
 
                 await webSocket
                     .SendAsync(
-                        buffer: new(echoMessage),
+                        buffer: new(Encoding.UTF8.GetBytes(message)),
                         messageType: WebSocketMessageType.Text,
                         endOfMessage: true,
                         cancellationToken: cancellationToken

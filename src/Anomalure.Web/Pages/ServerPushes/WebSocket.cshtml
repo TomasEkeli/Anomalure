@@ -2,6 +2,18 @@
 @namespace Anomalure.Web.Pages.ServerPushes
 @model ServerPushesWebSocketModel
 
-<h1>WebSocket Echo</h1>
+<h1>WebSocket Time</h1>
 
-<p>Open a WebSocket connection to this page to send and receive echo messages.</p>
+<p>Open a WebSocket connection to this page to receive time messages every 0.8 to 3 seconds:</p>
+
+<p>With a querystring of <code>via=htmx</code>:
+<pre>
+    @ServerPushesWebSocketModel.HtmlTime()
+</pre>
+</p>
+<p>Without a querystring:
+<pre>
+    @ServerPushesWebSocketModel.JsonTime()
+</pre>
+</p>
+
