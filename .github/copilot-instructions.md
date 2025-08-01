@@ -14,6 +14,7 @@ This is a .NET Razor application that uses HTMX for dynamic, interactive web com
 - **Small Files**: Keep files small and focused on a single responsibility.
 - **Short Lines**: Limit lines to a maximum of 80 characters for readability across multiple tools and devices.
 - **Readable Names**: Use descriptive and meaningful names for variables, methods, and classes.
+- **Consistent Formatting**: Follow consistent indentation and spacing. Format method parameters vertically for readability when needed.
 
 ### Razor Pages
 - Use Razor Pages for structuring the application.
@@ -35,11 +36,13 @@ This is a .NET Razor application that uses HTMX for dynamic, interactive web com
 - Follow .NET coding conventions.
 - Use consistent indentation and spacing.
 - Avoid magic numbers and hardcoded values; use constants or configuration files instead.
+- Use `partial` classes for extensibility when appropriate.
+- Integrate logging into methods to track operations.
+- Prefer `async`/`await` for methods interacting with external resources.
 
-## Testing
-- Write unit tests for backend logic.
-- Use integration tests for Razor Pages and HTMX interactions.
-- Place test files in a separate `tests` folder.
+### Dependency Injection
+- Use dependency injection for services like `ILogger` and `IRsaKeyManager`.
+- Implement appropriate service lifetimes (e.g., `ISingletonService`).
 
 ## Deployment
 - Use Docker for containerized deployment.
