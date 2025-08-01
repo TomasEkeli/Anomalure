@@ -2,11 +2,8 @@ root = true
 
 # All files
 [*]
-indent_style = space
+indent_style = tab
 trim_trailing_whitespace = true
-
-# Xml files
-[*.xml]
 indent_size = 2
 
 # C# files
@@ -14,10 +11,6 @@ indent_size = 2
 max_line_length = 80
 
 #### Core EditorConfig Options ####
-
-# Indentation and spacing
-indent_size = 2
-tab_width = 2
 
 # New line preferences
 insert_final_newline = true
@@ -163,7 +156,6 @@ csharp_indent_switch_labels = true
 csharp_space_after_cast = false
 csharp_space_after_colon_in_inheritance_clause = true
 csharp_space_after_comma = true
-csharp_space_after_dot = false
 csharp_space_after_keywords_in_control_flow_statements = true
 csharp_space_after_semicolon_in_for_statement = true
 csharp_space_around_binary_operators = before_and_after
@@ -185,7 +177,7 @@ csharp_space_between_square_brackets = false
 
 # Wrapping preferences
 csharp_preserve_single_line_blocks = true
-csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_statements = false
 
 #### Naming styles ####
 [*.{cs,vb}]

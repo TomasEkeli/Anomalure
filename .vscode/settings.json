@@ -1,0 +1,12 @@
+{
+	"editor.formatOnSave": true,
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"[csharp]": {
+		"editor.defaultFormatter": "csharpier.csharpier-vscode"
+	},
+	"[xml]": {
+		"editor.defaultFormatter": "csharpier.csharpier-vscode"
+	},
+}
