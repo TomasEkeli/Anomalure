@@ -4,7 +4,5 @@ namespace Anomalure.Web.Pages.ServerPushes;
 
 public class ServerPushesModel : PageModel
 {
-    public void OnGet()
-    {
-    }
+	public void OnGet() { }
 }
